@@ -56,3 +56,89 @@ public class StoryboardUtil: NSObject {
         return naviController
     }
 }
+
+extension UIWindow {
+    
+    // MARK: Change RootViewController in UIWindow
+    
+    public func setAnimatedRootViewController<T: UIViewController>(_ newRootViewController: T) {
+        
+        let previousViewController = rootViewController
+        rootViewController = newRootViewController
+        
+        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
+        
+        if let previousViewController = previousViewController {
+            
+            previousViewController.dismiss(animated: false) {
+                previousViewController.view.removeFromSuperview()
+            }
+        }
+        
+        UIApplication.shared.endIgnoringInteractionEvents()
+    }
+}
+
+extension UIApplication {
+    
+    // NARK: Find Too ViewController
+    
+    class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, complete: @escaping (UIViewController?) -> Void) {
+        
+        DispatchQueue.main.async {
+            
+            if let navigationController = controller as? UINavigationController {
+                topViewController(controller: navigationController.visibleViewController, complete: complete)
+                return
+            }
+            
+            if let tabController = controller as? UITabBarController {
+                if let selected = tabController.selectedViewController {
+                    topViewController(controller: selected, complete: complete)
+                    return
+                }
+            }
+            
+            if let presented = controller?.presentedViewController {
+                topViewController(controller: presented, complete: complete)
+                return
+            }
+            
+            complete(controller)
+        }
+    }
+    
+    class func topViewController(complete: @escaping (UIViewController?) -> Void) {
+        
+        DispatchQueue.main.async {
+            
+            let controller = UIApplication.shared.keyWindow?.rootViewController
+            
+            if let navigationController = controller as? UINavigationController {
+                topViewController(controller: navigationController.visibleViewController, complete: complete)
+                return
+            }
+            
+            if let tabController = controller as? UITabBarController {
+                if let selected = tabController.selectedViewController {
+                    topViewController(controller: selected, complete: complete)
+                    return
+                }
+            }
+            
+            if let presented = controller?.presentedViewController {
+                topViewController(controller: presented, complete: complete)
+                return
+            }
+            
+            complete(controller)
+        }
+    }
+    
+    // MARK: Change RootViewController
+    
+    class func setRootViewController(viewController: UIViewController) {
+        
+        UIApplication.shared.delegate?.window??.setAnimatedRootViewController(viewController)
+    }
+}
