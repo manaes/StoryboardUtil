@@ -1,10 +1,10 @@
 import UIKit
 
-final class StoryboardUtil: NSObject {
+public class StoryboardUtil: NSObject {
     
     public static let shared = StoryboardUtil()
     
-    public var storyboardNames = [String]()
+    public var boards = [String]()
     
     // MARK: Get ViewController From Storyboard
     
@@ -12,7 +12,7 @@ final class StoryboardUtil: NSObject {
         
         let name = String(describing: from)
         
-        for sotyrboardName in StoryboardUtil.shared.storyboardNames {
+        for sotyrboardName in StoryboardUtil.shared.boards {
             
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             
@@ -30,7 +30,7 @@ final class StoryboardUtil: NSObject {
     
     static func navigation<T: UINavigationController>(name: String) -> T {
         
-        for sotyrboardName in StoryboardUtil.shared.storyboardNames {
+        for sotyrboardName in StoryboardUtil.shared.boards {
             
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             
