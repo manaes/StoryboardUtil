@@ -8,7 +8,7 @@ public class StoryboardUtil: NSObject {
     
     // MARK: Get ViewController From Storyboard
     
-    static func controller<T: UIViewController>(from: T.Type) -> T {
+    public func controller<T: UIViewController>(from: T.Type) -> T {
         
         let name = String(describing: from)
         
@@ -28,7 +28,7 @@ public class StoryboardUtil: NSObject {
     
     // MARK: Get NavigationController From Storyboard
     
-    static func navigation<T: UINavigationController>(name: String) -> T {
+    public func navigation<T: UINavigationController>(name: String) -> T {
         
         for sotyrboardName in StoryboardUtil.shared.boards {
             
@@ -46,7 +46,7 @@ public class StoryboardUtil: NSObject {
     
     // MARK: Get Default NavigationController From ViewController
     
-    static func defaultNavigation<T: UIViewController>(root: T, isClear: Bool = false, isUseTheme: Bool = true) -> UINavigationController {
+    public func defaultNavigation<T: UIViewController>(root: T, isClear: Bool = false, isUseTheme: Bool = true) -> UINavigationController {
         
         root.title = nil
         
