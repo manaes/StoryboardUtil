@@ -83,7 +83,7 @@ extension UIApplication {
     
     // NARK: Find Too ViewController
     
-    class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, complete: @escaping (UIViewController?) -> Void) {
+    public class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, complete: @escaping (UIViewController?) -> Void) {
         
         DispatchQueue.main.async {
             
@@ -108,7 +108,7 @@ extension UIApplication {
         }
     }
     
-    class func topViewController(complete: @escaping (UIViewController?) -> Void) {
+    public class func topViewController(complete: @escaping (UIViewController?) -> Void) {
         
         DispatchQueue.main.async {
             
@@ -137,7 +137,7 @@ extension UIApplication {
     
     // MARK: Change RootViewController
     
-    class func setRootViewController(viewController: UIViewController) {
+    public class func setRootViewController(viewController: UIViewController) {
         
         UIApplication.shared.delegate?.window??.setAnimatedRootViewController(viewController)
     }
