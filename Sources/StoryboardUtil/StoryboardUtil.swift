@@ -108,7 +108,8 @@ extension UIApplication {
         }
     }
     
-    public class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) async -> UIViewController? {
+    @available(iOS 13.0.0, *)
+    public class func topViewController(controller: UIViewController?) async -> UIViewController? {
 
         if let navigationController = controller as? UINavigationController {
             return await topViewController(controller: navigationController.visibleViewController)
@@ -127,6 +128,7 @@ extension UIApplication {
         return controller
     }
     
+    @available(iOS 13.0.0, *)
     public class func topViewController() async -> UIViewController? {
         
         let controller = UIApplication.shared.keyWindow?.rootViewController
