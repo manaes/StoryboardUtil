@@ -1,0 +1,4 @@
+module StoryboardUtil {
+    header "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil-Swift.h"
+    requires objc
+}

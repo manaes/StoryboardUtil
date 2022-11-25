@@ -1,0 +1,6 @@
+version: "Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)"
+options: "b67190ba0e6d8671743ae4eee3bb143cbe58b1bce3d03feb41e7fcb673aee82d"
+build_start_time: [1669344507, 713945865]
+build_end_time: [1669344508, 91418027]
+inputs:
+  "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/Sources/StoryboardUtil/StoryboardUtil.swift": !private [1669344434, 669825315]
