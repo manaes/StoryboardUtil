@@ -3,4 +3,7 @@ import XCTest
 
 final class StoryboardUtilTests: XCTestCase {
 
+    func testExample() throws {
+
+    }
 }

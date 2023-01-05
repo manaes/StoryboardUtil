@@ -1,11 +1,11 @@
 {
   "": {
-    "swift-dependencies": "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/master.swiftdeps"
+    "swift-dependencies": "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/master.swiftdeps"
   },
-  "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/Sources/StoryboardUtil/StoryboardUtil.swift": {
-    "dependencies": "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.d",
-    "object": "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.swift.o",
-    "swiftmodule": "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil~partial.swiftmodule",
-    "swift-dependencies": "/Users/manaes/Desktop/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.swiftdeps"
+  "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/Sources/StoryboardUtil/StoryboardUtil.swift": {
+    "dependencies": "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.d",
+    "object": "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.swift.o",
+    "swiftmodule": "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil~partial.swiftmodule",
+    "swift-dependencies": "/Users/manaes/@working/@SwiftPackage/StoryboardUtil/.build/x86_64-apple-macosx/debug/StoryboardUtil.build/StoryboardUtil.swiftdeps"
   }
 }
