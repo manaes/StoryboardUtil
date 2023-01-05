@@ -9,11 +9,17 @@ public class StoryboardUtil: NSObject {
     
     // MARK: Get ViewController From Storyboard
     
-    public func controller<T: UIViewController>(from: T.Type) -> T {
+    public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         let name = String(describing: from)
         for sotyrboardName in StoryboardUtil.shared.boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
+                
+                if #available(iOS 13.0.0, *) {
+                    if let coder = creator {
+                        return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
+                    }
+                }
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
         }
@@ -23,10 +29,16 @@ public class StoryboardUtil: NSObject {
     
     // MARK: Get NavigationController From Storyboard
     
-    public func navigation<T: UINavigationController>(name: String) -> T {
+    public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         for sotyrboardName in StoryboardUtil.shared.boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
+                
+                if #available(iOS 13.0.0, *) {
+                    if let coder = creator {
+                        return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
+                    }
+                }
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
         }
