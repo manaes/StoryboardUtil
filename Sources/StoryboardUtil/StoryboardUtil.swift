@@ -14,11 +14,8 @@ public class StoryboardUtil: NSObject {
         for sotyrboardName in StoryboardUtil.shared.boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
-                
-                if #available(iOS 13.0.0, *) {
-                    if let coder = creator {
-                        return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
-                    }
+                if let coder = creator {
+                    return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
                 }
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
@@ -33,11 +30,8 @@ public class StoryboardUtil: NSObject {
         for sotyrboardName in StoryboardUtil.shared.boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
-                
-                if #available(iOS 13.0.0, *) {
-                    if let coder = creator {
-                        return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
-                    }
+                if let coder = creator {
+                    return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
                 }
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
@@ -69,7 +63,7 @@ extension UIApplication {
     
     // NARK: Find Too ViewController
     
-    public class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController, complete: @escaping (UIViewController?) -> Void) {
+    public class func topViewController(controller: UIViewController? = UIApplication.shared.windows.first(where: \.isKeyWindow)?.rootViewController, complete: @escaping (UIViewController?) -> Void) {
 
         DispatchQueue.main.async {
 
@@ -98,7 +92,8 @@ extension UIApplication {
         
         DispatchQueue.main.async {
             
-            let controller = UIApplication.shared.keyWindow?.rootViewController
+            let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow)
+            let controller = keyWindow?.rootViewController
             
             if let navigationController = controller as? UINavigationController {
                 topViewController(controller: navigationController.visibleViewController, complete: complete)
@@ -121,7 +116,6 @@ extension UIApplication {
         }
     }
     
-    @available(iOS 13.0.0, *)
     public class func topViewController(controller: UIViewController?) async -> UIViewController? {
 
         if let navigationController = controller as? UINavigationController {
@@ -141,10 +135,10 @@ extension UIApplication {
         return controller
     }
     
-    @available(iOS 13.0.0, *)
     public class func topViewController() async -> UIViewController? {
         
-        let controller = UIApplication.shared.keyWindow?.rootViewController
+        let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow)
+        let controller = keyWindow?.rootViewController
         
         if let navigationController = controller as? UINavigationController {
             return await topViewController(controller: navigationController.visibleViewController)
