@@ -11,7 +11,7 @@ public class StoryboardUtil: NSObject {
         if let path = Bundle.module.path(forResource: "StoryboardList", ofType: "txt"),
            let content = try? String(contentsOfFile: path, encoding: .utf8) {
             var storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
-            storybaordList = storybaordList.filter { StoryboardUtil.shared.excludeBoards.contains($0) }
+            storybaordList = storybaordList.filter { !StoryboardUtil.shared.excludeBoards.contains($0) }
             return storybaordList.map { $0.replacingOccurrences(of: ".storyboard", with: "") }
         }
         return []
