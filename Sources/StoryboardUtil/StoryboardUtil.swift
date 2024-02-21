@@ -3,15 +3,20 @@ import UIKit
 
 public class StoryboardUtil: NSObject {
     
-    public static let shared = StoryboardUtil()
-    
-    public var boards = [String]()
-    
+    public var boards: [String] {
+        if let path = Bundle.main.path(forResource: "StoryboardList", ofType: "txt"),
+           let content = try? String(contentsOfFile: path, encoding: .utf8) {
+            let storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
+            return storybaordList.map { $0.replacingOccurrences(of: ".storyboard", with: "") }
+        }
+        return []
+    }
+
     // MARK: Get ViewController From Storyboard
     
     public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         let name = String(describing: from)
-        for sotyrboardName in StoryboardUtil.shared.boards {
+        for sotyrboardName in boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
                 if let coder = creator {
@@ -23,11 +28,11 @@ public class StoryboardUtil: NSObject {
         assertionFailure("Error! Board Not Found!")
         return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: name) as! T
     }
-    
+
     // MARK: Get NavigationController From Storyboard
     
     public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
-        for sotyrboardName in StoryboardUtil.shared.boards {
+        for sotyrboardName in boards {
             let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
                 if let coder = creator {
@@ -116,6 +121,7 @@ extension UIApplication {
         }
     }
     
+    @MainActor
     public class func topViewController(controller: UIViewController?) async -> UIViewController? {
 
         if let navigationController = controller as? UINavigationController {
@@ -135,6 +141,7 @@ extension UIApplication {
         return controller
     }
     
+    @MainActor
     public class func topViewController() async -> UIViewController? {
         
         let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow)
