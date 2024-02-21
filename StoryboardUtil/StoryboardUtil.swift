@@ -4,7 +4,7 @@ import UIKit
 public class StoryboardUtil: NSObject {
     
     public var boards: [String] {
-        if let path = Bundle.main.path(forResource: "StoryboardList", ofType: "txt"),
+        if let path = Bundle.module.path(forResource: "StoryboardList", ofType: "txt"),
            let content = try? String(contentsOfFile: path, encoding: .utf8) {
             let storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
             return storybaordList.map { $0.replacingOccurrences(of: ".storyboard", with: "") }
