@@ -2,11 +2,16 @@ import Foundation
 import UIKit
 
 public class StoryboardUtil: NSObject {
-    
+
+    public static let shared = StoryboardUtil()
+
+    private var excludeBoards = ["LaunchScreen"]
+
     public var boards: [String] {
         if let path = Bundle.module.path(forResource: "StoryboardList", ofType: "txt"),
            let content = try? String(contentsOfFile: path, encoding: .utf8) {
-            let storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
+            var storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
+            storybaordList = storybaordList.filter { StoryboardUtil.shared.excludeBoards.contains($0) }
             return storybaordList.map { $0.replacingOccurrences(of: ".storyboard", with: "") }
         }
         return []
@@ -17,8 +22,8 @@ public class StoryboardUtil: NSObject {
     public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         let name = String(describing: from)
         for sotyrboardName in boards {
-            let storyboard = UIStoryboard(name: sotyrboardName, bundle: Bundle.main)
-            if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
+            let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
+            if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: String], availableIdentifiers[name] != nil {
                 if let coder = creator {
                     return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
                 }
@@ -32,8 +37,8 @@ public class StoryboardUtil: NSObject {
     
     public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         for sotyrboardName in boards {
-            let storyboard = UIStoryboard(name: sotyrboardName, bundle: Bundle.main)
-            if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
+            let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
+            if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: String], availableIdentifiers[name] != nil {
                 if let coder = creator {
                     return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
                 }
