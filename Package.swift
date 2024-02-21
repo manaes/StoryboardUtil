@@ -16,6 +16,7 @@ let package = Package(
         .target(
             name: "StoryboardUtil",
             dependencies: [],
+            path: "StoryboardUtil",
             resources: [.copy("StoryboardList.txt")]),
     ]
 )
