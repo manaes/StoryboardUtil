@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "StoryboardUtil",
             dependencies: [],
-            resources: [.copy("Resources")]),
+            resources: [.copy("StoryboardList.txt")]),
         .testTarget(
             name: "StoryboardUtilTests",
             dependencies: ["StoryboardUtil"]),
