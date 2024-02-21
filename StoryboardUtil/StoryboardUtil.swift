@@ -17,7 +17,7 @@ public class StoryboardUtil: NSObject {
     public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         let name = String(describing: from)
         for sotyrboardName in boards {
-            let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
+            let storyboard = UIStoryboard(name: sotyrboardName, bundle: Bundle.main)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
                 if let coder = creator {
                     return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
@@ -25,15 +25,14 @@ public class StoryboardUtil: NSObject {
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
         }
-        assertionFailure("Error! Board Not Found!")
-        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: name) as! T
+        fatalError("Error! Board Not Found!")
     }
 
     // MARK: Get NavigationController From Storyboard
     
     public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
         for sotyrboardName in boards {
-            let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
+            let storyboard = UIStoryboard(name: sotyrboardName, bundle: Bundle.main)
             if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: Any], availableIdentifiers[name] != nil {
                 if let coder = creator {
                     return storyboard.instantiateViewController(identifier: name, creator: coder) as! T
@@ -41,8 +40,7 @@ public class StoryboardUtil: NSObject {
                 return storyboard.instantiateViewController(withIdentifier: name) as! T
             }
         }
-        assertionFailure("Error! Board Not Found!")
-        return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: name) as! T
+        fatalError("Error! Board Not Found!")
     }
 }
 
