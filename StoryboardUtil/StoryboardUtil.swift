@@ -18,7 +18,7 @@ public class StoryboardUtil: NSObject {
 
   // MARK: - Get ViewController From Storyboard
 
-  public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController)? = nil) -> T {
+  public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
     let name = String(describing: from)
     for sotyrboardName in boards {
       let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
@@ -34,7 +34,7 @@ public class StoryboardUtil: NSObject {
 
   // MARK: - Get NavigationController From Storyboard
 
-  public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController)? = nil) -> T {
+  public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
     for sotyrboardName in boards {
       let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
       if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: String], availableIdentifiers[name] != nil {
@@ -180,27 +180,27 @@ extension UIApplication {
     }
   }
 
-  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController)? = nil) {
+  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
     UIApplication.topViewController {
       let vc = StoryboardUtil().controller(from: type, creator: creator)
       $0.navigationController?.pushViewController(vc, animated: true)
     }
   }
 
-  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController)? = nil) async {
+  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
     let topVC = await UIApplication.topViewController()
     let vc = StoryboardUtil().controller(from: type, creator: creator)
     topVC.navigationController?.pushViewController(vc, animated: true)
   }
 
-  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController)? = nil) {
+  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
     UIApplication.topViewController {
       let vc = StoryboardUtil().controller(from: type, creator: creator)
       $0.present(vc, animated: true)
     }
   }
 
-  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController)? = nil) async {
+  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
     let topVC = await UIApplication.topViewController()
     let vc = StoryboardUtil().controller(from: type, creator: creator)
     topVC.present(vc, animated: true)
