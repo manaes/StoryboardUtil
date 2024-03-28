@@ -1,11 +1,37 @@
 # StoryboardUtil
 
-xcode 프로젝트 - Build phases - New Run Script Phases - shell에 다음 스크립트 추가
+스토리보드에서 특정 identifier를 가진 viewController를 불러오기 위해서는 다음과 같은 코드를 사용해야한다.
 
-chmod 775 ~/Library/Developer/Xcode/DerivedData/Project/SourcePackages/checkouts/StoryboardUtil/StoryboardList.txt
-find "${SRCROOT}/${EXECUTABLE_NAME}" -name "*.storyboard" -exec basename {} \; > "${BUILD_DIR%Build/*}SourcePackages/checkouts/StoryboardUtil/StoryboardList.txt"
+let storyboard = UIStoryboard(name: "Main", bundle: nil)
+let testVC = storyboard.instantiateViewController(withIdentifier: "TestViewController") as! TestViewController
 
+하지만, 스토리보드가 많은 경우 매번 해당 viewController가 어느 storyboard에 존재하는지 확인하기가 어려운 문제가 있어서, 
+해당 프로젝트를 만들게 되었다.
 
-만약, storyboard로 사용하지 않는 (ex. LaunchScreen) 스토리보드가 있다면, 명시적으로 설정할 수 있음 (default ["LaunchScreen"]로 설정되어 있음) 
+사용법
 
-StoryboardUtil.shared.excludeBoards = ["LaunchScreen"]
+import StoryboardUtil
+...
+let testVC = StoryboardUtil().controller(from: TestViewController.self)  
+
+추가기능
+
+최상단의 viewController에 접근하고 싶은 경우,
+
+UIApplication.topViewController { topVC in 
+  // topVC는 최상단 viewController임
+}
+
+또는
+
+let topVC = await UIApplication.topViewController() 
+// topVC는 최상단 viewController임
+
+해당 함수를 사용하면,
+복잡한 서브뷰 최상단 화면이 아닌 클래스 내부에서, Alert / NavigationPush / Modal 등을 바로 처리할 수 있다
+
+... - ViewController - TableView - ACell에서 검색하면으로 바로 naviation push를 할 수 있음
+
+let topVC = await UIApplication.topViewController()
+let vc = StoryboardUtil().controller(from: SearchViewController.self)
+await topVC.navigationController?.pushViewController(vc, animated: true)  
