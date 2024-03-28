@@ -2,25 +2,30 @@ import Foundation
 import UIKit
 
 public class StoryboardUtil: NSObject {
-  public static let shared = StoryboardUtil()
-  public var excludeBoards = ["LaunchScreen"]
+  // Shared singleton instance with board names
+  private static let shared = StoryboardUtil()
 
-  public var boards: [String] {
-    if let path = Bundle.module.path(forResource: "StoryboardList", ofType: "txt"),
-       let content = try? String(contentsOfFile: path, encoding: .utf8) {
-      var storybaordList = content.components(separatedBy: "\n").filter { !$0.isEmpty }
-      storybaordList = storybaordList.map { $0.replacingOccurrences(of: ".storyboard", with: "") }
-      storybaordList = storybaordList.filter { !StoryboardUtil.shared.excludeBoards.contains($0) }
-      return storybaordList
+  private var excludeBoards = ["LaunchScreen"]
+  private var boards: Set<String> = []
+
+  private func checkBoardList() {
+    if StoryboardUtil.shared.boards.isEmpty {
+      let mainBundle = Bundle.main
+      let bundlePath = mainBundle.bundlePath
+      let filesEnumerator = FileManager.default.enumerator(atPath: bundlePath)!
+      while let file = filesEnumerator.nextObject() as? String {
+        guard let name = file.getStorybaordName(), !excludeBoards.contains(name) else { continue }
+        StoryboardUtil.shared.boards.insert(name)
+      }
     }
-    return []
   }
 
   // MARK: - Get ViewController From Storyboard
 
   public func controller<T: UIViewController>(from: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
+    checkBoardList()
     let name = String(describing: from)
-    for sotyrboardName in boards {
+    for sotyrboardName in StoryboardUtil.shared.boards {
       let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
       if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: String], availableIdentifiers[name] != nil {
         if let coder = creator {
@@ -35,7 +40,8 @@ public class StoryboardUtil: NSObject {
   // MARK: - Get NavigationController From Storyboard
 
   public func navigation<T: UINavigationController>(name: String, creator: ((NSCoder) -> UIViewController?)? = nil) -> T {
-    for sotyrboardName in boards {
+    checkBoardList()
+    for sotyrboardName in StoryboardUtil.shared.boards {
       let storyboard = UIStoryboard(name: sotyrboardName, bundle: nil)
       if let availableIdentifiers = storyboard.value(forKey: "identifierToNibNameMap") as? [String: String], availableIdentifiers[name] != nil {
         if let coder = creator {
@@ -48,16 +54,16 @@ public class StoryboardUtil: NSObject {
   }
 }
 
-extension UIWindow {
+public extension UIWindow {
   // MARK: - Change RootViewController in UIWindow
 
-  public func setAnimatedRootViewController<T: UIViewController>(_ newRootViewController: T) {
+  func setAnimatedRootViewController(_ newRootViewController: some UIViewController) {
     let previousViewController = rootViewController
     rootViewController = newRootViewController
 
     UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: nil, completion: nil)
 
-    if let previousViewController = previousViewController {
+    if let previousViewController {
       previousViewController.dismiss(animated: false) {
         previousViewController.view.removeFromSuperview()
       }
@@ -65,10 +71,10 @@ extension UIWindow {
   }
 }
 
-extension UIApplication {
+public extension UIApplication {
   // NARK: - Find Too ViewController
 
-  public class func topViewController(controller: UIViewController = UIApplication.shared.windows.first(where: \.isKeyWindow)!.rootViewController!, complete: @escaping (UIViewController) -> Void) {
+  class func topViewController(controller: UIViewController = UIApplication.shared.windows.first(where: \.isKeyWindow)!.rootViewController!, complete: @escaping (UIViewController) -> Void) {
     DispatchQueue.main.async {
       if let navigationController = controller as? UINavigationController {
         topViewController(controller: navigationController.visibleViewController!, complete: complete)
@@ -91,7 +97,7 @@ extension UIApplication {
     }
   }
 
-  public class func topViewController(complete: @escaping (UIViewController) -> Void) {
+  class func topViewController(complete: @escaping (UIViewController) -> Void) {
     DispatchQueue.main.async {
       guard
         let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow),
@@ -120,7 +126,7 @@ extension UIApplication {
   }
 
   @MainActor
-  public class func topViewController(controller: UIViewController) async -> UIViewController {
+  class func topViewController(controller: UIViewController) async -> UIViewController {
     if let navigationController = controller as? UINavigationController {
       return await topViewController(controller: navigationController.visibleViewController!)
     }
@@ -139,7 +145,7 @@ extension UIApplication {
   }
 
   @MainActor
-  public class func topViewController() async -> UIViewController {
+  class func topViewController() async -> UIViewController {
     guard
       let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow),
       let controller = keyWindow.rootViewController
@@ -166,43 +172,63 @@ extension UIApplication {
 
   // MARK: - Change RootViewController
 
-  public class func setRootViewController(viewController: UIViewController) {
+  class func setRootViewController(viewController: UIViewController) {
     UIApplication.shared.delegate?.window??.setAnimatedRootViewController(viewController)
   }
 }
 
 // MARK: - Navigation
 
-extension UIApplication {
-  public class func popToTopNavigation() {
+public extension UIApplication {
+  class func popToTopNavigation() {
     UIApplication.topViewController {
       $0.navigationController?.popViewController(animated: true)
     }
   }
 
-  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
+  class func pushToTopNavigation(_ type: (some UIViewController).Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
     UIApplication.topViewController {
       let vc = StoryboardUtil().controller(from: type, creator: creator)
       $0.navigationController?.pushViewController(vc, animated: true)
     }
   }
 
-  public class func pushToTopNavigation<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
+  class func pushToTopNavigation(_ type: (some UIViewController).Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
     let topVC = await UIApplication.topViewController()
     let vc = StoryboardUtil().controller(from: type, creator: creator)
     topVC.navigationController?.pushViewController(vc, animated: true)
   }
 
-  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
+  class func presentToTop(_ type: (some UIViewController).Type, creator: ((NSCoder) -> UIViewController?)? = nil) {
     UIApplication.topViewController {
       let vc = StoryboardUtil().controller(from: type, creator: creator)
       $0.present(vc, animated: true)
     }
   }
 
-  public class func presentToTop<T: UIViewController>(_ type: T.Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
+  class func presentToTop(_ type: (some UIViewController).Type, creator: ((NSCoder) -> UIViewController?)? = nil) async {
     let topVC = await UIApplication.topViewController()
     let vc = StoryboardUtil().controller(from: type, creator: creator)
     topVC.present(vc, animated: true)
+  }
+}
+
+// MARK: - Storyboard name from fileName
+
+extension String {
+  func getStorybaordName() -> String? {
+    if !self.hasSuffix(".storyboardc") {
+      return nil
+    }
+    let hasSubPath = self.components(separatedBy: "/").count > 1
+    if hasSubPath {
+      // Check Localized (ex. Base.lproj/Main.storyboardc)
+      if self.components(separatedBy: "/").count == 2, self.contains(".lproj/") {
+        return self.components(separatedBy: "/").last?.components(separatedBy: ".storyboardc").first
+      }
+    } else {
+      return self.components(separatedBy: ".storyboardc").first
+    }
+    return nil
   }
 }
