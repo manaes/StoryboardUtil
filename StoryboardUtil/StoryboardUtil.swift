@@ -72,7 +72,7 @@ public extension UIWindow {
 }
 
 public extension UIApplication {
-  // NARK: - Find Too ViewController
+  // NARK: - Find Top ViewController
 
   class func topViewController(controller: UIViewController = UIApplication.shared.windows.first(where: \.isKeyWindow)!.rootViewController!, complete: @escaping (UIViewController) -> Void) {
     DispatchQueue.main.async {
@@ -150,7 +150,7 @@ public extension UIApplication {
       let keyWindow = UIApplication.shared.windows.first(where: \.isKeyWindow),
       let controller = keyWindow.rootViewController
     else {
-      fatalError("Error! Keywindow is nil!. If you use SceneDelegate, can't use this function")
+      fatalError("Error! Keywindow is nil!")
     }
 
     if let navigationController = controller as? UINavigationController {
@@ -173,6 +173,15 @@ public extension UIApplication {
   // MARK: - Change RootViewController
 
   class func setRootViewController(viewController: UIViewController) {
+    let allScenes = UIApplication.shared.connectedScenes
+    if let windowScene = allScenes.first as? UIWindowScene {
+      if #available(iOS 15.0, *) {
+        windowScene.keyWindow?.setAnimatedRootViewController(viewController)
+      } else {
+        windowScene.windows.first?.setAnimatedRootViewController(viewController)
+      }
+      return
+    }
     UIApplication.shared.delegate?.window??.setAnimatedRootViewController(viewController)
   }
 }
